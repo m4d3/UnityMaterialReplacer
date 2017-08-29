@@ -1,11 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 
 public class MaterialReplacer : EditorWindow
 {
     private Material _baseMaterial;
+    private int _counter;
     private Material _replaceMaterial;
     private GameObject[] _selection;
 
@@ -13,23 +12,27 @@ public class MaterialReplacer : EditorWindow
     private string _text;
 
     [MenuItem("Window/MaterialReplacer")]
-    private static void Create() {
-        MaterialReplacer window = (MaterialReplacer)GetWindow(typeof(MaterialReplacer));
+    private static void Create()
+    {
+        var window = (MaterialReplacer) GetWindow(typeof(MaterialReplacer));
         window.Show();
     }
 
-    private void Awake() {
+    private void Awake()
+    {
         _style = new GUIStyle();
         _style.wordWrap = true;
 
         _text = "Select one or more objects, if base material is found it will be replaced by replace material";
     }
 
-    private void OnGUI() {
+    private void OnGUI()
+    {
         EditorGUILayout.BeginVertical();
 
         _baseMaterial = (Material) EditorGUILayout.ObjectField("Base Material", _baseMaterial, typeof(Material), false);
-        _replaceMaterial = (Material)EditorGUILayout.ObjectField("Replace Material", _replaceMaterial, typeof(Material), false);
+        _replaceMaterial =
+            (Material) EditorGUILayout.ObjectField("Replace Material", _replaceMaterial, typeof(Material), false);
 
         if (GUILayout.Button("Replace Materials"))
         {
@@ -46,11 +49,14 @@ public class MaterialReplacer : EditorWindow
             _selection = Selection.gameObjects;
             if (_selection.Length > 0)
             {
-                foreach (GameObject go in _selection)
+                _counter = 0;
+                foreach (var go in _selection)
                 {
                     SwitchMaterials(go);
                     SwitchChildMaterials(go.transform);
                 }
+
+                _text = _counter + " materials replaced";
             }
             else
             {
@@ -63,23 +69,26 @@ public class MaterialReplacer : EditorWindow
         EditorGUILayout.EndVertical();
     }
 
-    void SwitchMaterials(GameObject go)
+    private void SwitchMaterials(GameObject go)
     {
-        if (go.GetComponent<MeshRenderer>()) {
-            Material[] sharedMats = go.GetComponent<MeshRenderer>().sharedMaterials;
-            for (int i = 0; i < sharedMats.Length; i++) {
-                if (sharedMats[i].name.Equals(_baseMaterial.name)) {
+        if (go.GetComponent<MeshRenderer>())
+        {
+            var sharedMats = go.GetComponent<MeshRenderer>().sharedMaterials;
+            for (var i = 0; i < sharedMats.Length; i++)
+                if (sharedMats[i].name.Equals(_baseMaterial.name))
+                {
                     sharedMats[i] = _replaceMaterial;
+                    _counter++;
                 }
-            }
 
             go.GetComponent<MeshRenderer>().sharedMaterials = sharedMats;
         }
     }
 
-    void SwitchChildMaterials(Transform root)
+    private void SwitchChildMaterials(Transform root)
     {
-        foreach (Transform child in root) {
+        foreach (Transform child in root)
+        {
             SwitchMaterials(child.gameObject);
             SwitchChildMaterials(child);
         }
