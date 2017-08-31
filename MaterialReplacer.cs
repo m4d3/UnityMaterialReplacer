@@ -74,14 +74,17 @@ public class MaterialReplacer : EditorWindow
         if (go.GetComponent<MeshRenderer>())
         {
             var sharedMats = go.GetComponent<MeshRenderer>().sharedMaterials;
-            for (var i = 0; i < sharedMats.Length; i++)
-                if (sharedMats[i].name.Equals(_baseMaterial.name))
-                {
-                    sharedMats[i] = _replaceMaterial;
-                    _counter++;
-                }
+            if (sharedMats != null && sharedMats.Length > 0)
+            {
+                for (var i = 0; i < sharedMats.Length; i++)
+                    if (sharedMats[i] != null && sharedMats[i].name.Equals(_baseMaterial.name))
+                    {
+                        sharedMats[i] = _replaceMaterial;
+                        _counter++;
+                    }
 
-            go.GetComponent<MeshRenderer>().sharedMaterials = sharedMats;
+                go.GetComponent<MeshRenderer>().sharedMaterials = sharedMats;
+            }
         }
     }
 
