@@ -6,4 +6,6 @@ It works by searching materials based on name on selected objects and replaces t
 ## Installation:
 Place the script in Assets/Editor/ (or an editor folder of your choice). Tool can be found in Windows > MaterialReplacer.
 
+![alt text](http://i.imgur.com/E5J7C6g.png)
+
 
